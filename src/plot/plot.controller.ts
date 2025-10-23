@@ -52,7 +52,6 @@ export class PlotController {
       });
     }
 
-    // Actualizar campos sin cambiar el ID
     existingPlot.name = input.name;
     existingPlot.cadastralNumber = input.cadastralNumber;
     existingPlot.area = input.area;

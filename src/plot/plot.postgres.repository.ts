@@ -2,7 +2,6 @@ import { PlotRepository } from "./plot.repository.interface.js";
 import { Plot } from "./plot.entity.js";
 import { Client } from "pg";
 
-// Instancia única del cliente PostgreSQL
 const client = new Client({
   user: 'postgres',
   host: 'localhost',
@@ -76,7 +75,6 @@ export class PlotPostgresRepository implements PlotRepository {
       ]
     );
 
-    // Validación segura sin usar rowCount
     if (!res.rows || res.rows.length === 0) {
       console.warn(`No plot updated for id: ${id}`);
       return undefined;

@@ -23,8 +23,8 @@ export class Plot {
       date: Date,
       millimeters: number
     }[] = [],
-    id?: string // ← opcional
+    id?: string
   ) {
-    this.id = id ?? crypto.randomUUID(); // ← solo si no se pasa
+    this.id = id ?? crypto.randomUUID();
   }
 }
