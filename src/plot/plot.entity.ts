@@ -1,6 +1,8 @@
 import crypto from 'node:crypto'
 
 export class Plot {
+  public id: string;
+
   constructor(
     public name: string,
     public cadastralNumber: string,
@@ -21,6 +23,8 @@ export class Plot {
       date: Date,
       millimeters: number
     }[] = [],
-    public id: string = crypto.randomUUID()
-  ) {}
+    id?: string // ← opcional
+  ) {
+    this.id = id ?? crypto.randomUUID(); // ← solo si no se pasa
+  }
 }

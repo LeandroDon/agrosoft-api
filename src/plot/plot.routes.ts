@@ -8,6 +8,7 @@ plotRouter.get('/', plotController.findAllPlots);
 plotRouter.get('/:id', plotController.findPlotById);
 plotRouter.post('/', sanitizePlotInput, plotController.addPlot);
 plotRouter.put('/:id', sanitizePlotInput, plotController.updatePlot);
+plotRouter.patch('/:id', plotController.patchPlot);
 plotRouter.delete('/:id', plotController.deletePlot);  
 
 function sanitizePlotInput(req:any, res:any, next:any) {
