@@ -1,4 +1,4 @@
-import Employee from "./Employee.controller.js";
+import { Employee } from "./employee.entity.js";
 
 export interface EmployeeRepository {
     findAll(): Promise<Employee[] | undefined>;

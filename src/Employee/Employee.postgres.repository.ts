@@ -1,5 +1,5 @@
-import { EmployeeRepository } from "./Employee.repository.interface.js";
-import { Employee } from "./Employee.entity.js";
+import { EmployeeRepository } from "./employee.repository.interface.js";
+import { Employee } from "./employee.entity.js";
 import { Client } from "pg";
 
 const client = new Client({

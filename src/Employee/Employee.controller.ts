@@ -1,9 +1,6 @@
-
-
-
 import { Request, Response } from 'express';
-import { Employee } from './Employee.entity.js';
-import { EmployeePostgresRepository } from './Employee.postgres.repository.js';
+import { Employee } from './employee.entity.js';
+import { EmployeePostgresRepository } from './employee.postgres.repository.js';
 
 // Repository instance
 const employeeRepository = new EmployeePostgresRepository();
@@ -71,19 +68,21 @@ export class EmployeeController {
     }
 
     // Deactivate employee
-    async deactivateEmployee(req: Request, res: Response) {
-        const employeeId = req.params.id;
-        const deactivated = await employeeRepository.deactivate(employeeId);
-        if (!deactivated) {
-            res.status(404).json({
-                errorMessage: 'Employee not found',
-                errorCode: 'EMPLOYEE_NOT_FOUND'
-            });
-            return;
-        }
+async deactivateEmployee(req: Request, res: Response) {
+  const employeeId = req.params.id;
+  const employee = await employeeRepository.findOne(employeeId);
 
-        res.json({ message: 'Employee deactivated successfully' });
-    }
+  if (!employee) {
+    res.status(404).json({
+      errorMessage: 'Employee not found',
+      errorCode: 'EMPLOYEE_NOT_FOUND'
+    });
+    return;
+  }
+
+  await employeeRepository.deactivate(employeeId);
+  res.json({ message: 'Employee deactivated successfully' });
+}
 
     // Reassign task
     async reassignTask(req: Request, res: Response) {
