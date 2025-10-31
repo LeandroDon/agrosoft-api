@@ -1,20 +1,11 @@
-export type MachineryStatus = 'active'|'maintenance'|'retired';
-
-export interface Machinery {
-  id: string;
-  name: string;
-  brand: string;
-  model: string;
-  status: MachineryStatus;
-  hours_used: number;
-  purchase_date: Date;
-}
+import { Machinery, MachineryStatus } from './machinery.entity';
 
 export interface MachineryRepository {
   findAll(): Promise<Machinery[]>;
   findByStatus(status: MachineryStatus): Promise<Machinery[]>;
+  findById(id: string): Promise<Machinery | null>;
   create(input: Omit<Machinery, 'id'>): Promise<Machinery>;
   update(id: string, input: Partial<Omit<Machinery, 'id'>>): Promise<Machinery | null>;
   delete(id: string): Promise<boolean>;
-  report(): Promise<any>;
+  report(): Promise<Array<{ status: MachineryStatus; count: number; hours: number }>>;
 }

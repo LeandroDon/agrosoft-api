@@ -1,14 +1,16 @@
 import { Router } from 'express';
-import { MachineryController } from './machinery.controller';
+import { MachineryController } from './machinery.controller.js';
 
-const router = Router();
+export const machineryRouter = Router();
 const c = new MachineryController();
 
-router.get('/', c.getAll.bind(c));
-router.get('/status/:status', c.getByStatus.bind(c));
-router.post('/', c.create.bind(c));
-router.put('/:id', c.update.bind(c));
-router.delete('/:id', c.delete.bind(c));
-router.get('/report', c.report.bind(c));
+machineryRouter.get('/', c.findAllMachinery.bind(c));
+machineryRouter.get('/:id', c.findMachineryById.bind(c));
+machineryRouter.post('/', c.addMachinery.bind(c));
+machineryRouter.put('/:id', c.updateMachinery.bind(c));
+machineryRouter.patch('/:id', c.patchMachinery.bind(c));
+machineryRouter.delete('/:id', c.deleteMachinery.bind(c));
 
-export default router;
+export default machineryRouter;
+
+

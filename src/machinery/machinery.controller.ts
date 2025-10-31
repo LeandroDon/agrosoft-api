@@ -1,59 +1,132 @@
-import { Request, Response, NextFunction } from 'express';
-import { z } from 'zod';
-import { MachineryPostgresRepository } from './machinery.postgres.repository';
+import { Request, Response } from 'express';
+import { Machinery } from './machinery.entity.js';
+import { MachineryPostgresRepository } from './machinery.postgres.repository.js';
 
-const repository = new MachineryPostgresRepository();
-
-const statusEnum = z.enum(['active','maintenance','retired']);
-const createSchema = z.object({
-  name: z.string().min(1),
-  brand: z.string().min(1),
-  model: z.string().min(1),
-  status: statusEnum,
-  hours_used: z.coerce.number().int().nonnegative().default(0),
-  purchase_date: z.coerce.date()
-});
-const updateSchema = createSchema.partial();
+const machineryRepository = new MachineryPostgresRepository();
 
 export class MachineryController {
-  async getAll(_req: Request, res: Response, next: NextFunction) {
-    try { res.json(await repository.findAll()); } catch (e) { next(e); }
+
+    async findAllMachinery(_req: Request, res: Response) {
+    const list = await machineryRepository.findAll();
+    res.json(list);
   }
 
-  async getByStatus(req: Request<{ status: string }>, res: Response, next: NextFunction) {
+    async findMachineryById(req: Request, res: Response) {
+    const machineryId = req.params.id;
+    const item = await machineryRepository.findById(machineryId);
+    if (!item) {
+      return res.status(404).json({
+        errorMessage: 'Machinery not found',
+        errorCode: 'MACHINERY_NOT_FOUND'
+      });
+    }
+    res.json({ data: item });
+  }
+
+    async addMachinery(req: Request, res: Response) {
+    const input = req.body;
+
+    const hours =
+      input.hours_used ?? input.hoursUsed ?? 0;
+    const purchaseDate =
+      input.purchase_date ?? input.purchaseDate;
+
+    const newMachinery = new Machinery(
+      input.name,
+      input.brand,
+      input.model,
+      input.status,       // 'active' | 'maintenance' | 'retired'
+      hours,
+      purchaseDate
+    );
+
+    await machineryRepository.create(newMachinery);
+    res.status(201).json({ data: newMachinery });
+  }
+
+   async updateMachinery(req: Request, res: Response) {
     try {
-      const status = statusEnum.parse(req.params.status);
-      res.json(await repository.findByStatus(status));
-    } catch (e) { next(e); }
+      const machineryId = req.params.id;
+      const input = req.body;
+
+      const existing = await machineryRepository.findById(machineryId);
+      if (!existing) {
+        return res.status(404).json({
+          errorMessage: 'Machinery not found',
+          errorCode: 'MACHINERY_NOT_FOUND'
+        });
+      }
+
+      existing.name = input.name;
+      existing.brand = input.brand;
+      existing.model = input.model;
+      existing.status = input.status;
+      existing.hours_used = input.hours_used ?? input.hoursUsed ?? existing.hours_used;
+      existing.purchase_date = input.purchase_date ?? input.purchaseDate ?? existing.purchase_date;
+
+      const updated = await machineryRepository.update(machineryId, existing);
+      if (!updated) {
+        return res.status(500).json({
+          errorMessage: 'Update failed',
+          errorCode: 'MACHINERY_UPDATE_FAILED'
+        });
+      }
+
+      res.status(200).json({ data: updated });
+    } catch (err) {
+      console.error('Error updating machinery:', err);
+      res.status(500).json({
+        errorMessage: 'Internal server error',
+        errorCode: 'MACHINERY_UPDATE_ERROR'
+      });
+    }
   }
 
-  async create(req: Request, res: Response, next: NextFunction) {
+  async deleteMachinery(req: Request, res: Response) {
     try {
-      const dto = createSchema.parse(req.body);
-      const newMachinery = await repository.create(dto);
-      res.status(201).json(newMachinery);
-    } catch (e) { next(e); }
+      const machineryId = req.params.id;
+      const deleted = await machineryRepository.delete(machineryId);
+      if (!deleted) {
+        return res.status(404).json({ errorMessage: 'Machinery not found' });
+      }
+      res.status(200).json({ data: deleted });
+    } catch (err) {
+      console.error('Error deleting machinery:', err);
+      res.status(500).json({
+        errorMessage: 'Error deleting machinery',
+        errorCode: 'MACHINERY_DELETE_ERROR'
+      });
+    }
   }
 
-  async update(req: Request<{ id: string }>, res: Response, next: NextFunction) {
+  async patchMachinery(req: Request, res: Response) {
     try {
-      const id = z.coerce.number().int().positive().parse(req.params.id);
-      const dto = updateSchema.parse(req.body);
-      const updated = await repository.update(id, dto);
-      if (!updated) return res.sendStatus(404);
-      res.json(updated);
-    } catch (e) { next(e); }
-  }
+      const machineryId = req.params.id;
+      const updates = req.body;
 
-  async delete(req: Request<{ id: string }>, res: Response, next: NextFunction) {
-    try {
-      const id = z.coerce.number().int().positive().parse(req.params.id);
-      const ok = await repository.delete(id);
-      res.sendStatus(ok ? 204 : 404);
-    } catch (e) { next(e); }
-  }
+      if (updates.hoursUsed !== undefined && updates.hours_used === undefined) {
+        updates.hours_used = updates.hoursUsed;
+      }
+      if (updates.purchaseDate !== undefined && updates.purchase_date === undefined) {
+        updates.purchase_date = updates.purchaseDate;
+      }
 
-  async report(_req: Request, res: Response, next: NextFunction) {
-    try { res.json(await repository.report()); } catch (e) { next(e); }
+      const updated = await machineryRepository.partialUpdate(machineryId, updates);
+
+      if (!updated) {
+        return res.status(404).json({
+          errorMessage: 'Machinery not found or no fields updated',
+          errorCode: 'MACHINERY_PATCH_FAILED'
+        });
+      }
+
+      res.status(200).json({ data: updated });
+    } catch (err) {
+      console.error('Error patching machinery:', err);
+      res.status(500).json({
+        errorMessage: 'Internal server error',
+        errorCode: 'MACHINERY_PATCH_ERROR'
+      });
+    }
   }
 }
