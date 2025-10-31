@@ -5,7 +5,7 @@ import { Client } from "pg";
 const client = new Client({
     user: 'postgres',
     host: 'localhost',
-    database: 'employees',
+    database: 'agrosoft',
     password: 'postgres',
     port: 5432,
 });
@@ -19,35 +19,35 @@ export class EmployeePostgresRepository implements EmployeeRepository {
         client.connect();
     }
 
-    // Get all employees
     async findAll(): Promise<Employee[] | undefined> {
         const res = await client.query('SELECT * FROM employees');
         return res.rows as Employee[] || undefined;
     }
 
-    // Get employee by ID
     async findOne(id: string): Promise<Employee | undefined> {
         const res = await client.query('SELECT * FROM employees WHERE id = $1', [id]);
         return res.rows[0] as Employee || undefined;
     }
 
-    // Add new employee
     async add(employee: Employee): Promise<Employee | undefined> {
         try {
             const res = await client.query(
-                `INSERT INTO employees 
-                (full_name, role, seniority, available_hours, overtime_hours, performance_score, assigned_tasks) 
-                VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+                `INSERT INTO employees (
+                id, fullname, role, seniority, availablehours,
+                overtimehours, salary, performancescore, assignedtasks
+                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
                 [
+                    employee.id,
                     employee.fullName,
                     employee.role,
                     employee.seniority,
                     employee.availableHours,
                     employee.overtimeHours,
+                    employee.salary,
                     employee.performanceScore,
                     employee.assignedTasks
-                ]
-            );
+            ]
+    );
             return res.rows[0];
         } catch (error) {
             console.error('Error adding employee:', error);
@@ -55,23 +55,23 @@ export class EmployeePostgresRepository implements EmployeeRepository {
         }
     }
 
-    // Update full employee record
     async update(id: string, employee: Employee): Promise<Employee | undefined> {
         try {
             const res = await client.query(
                 `UPDATE employees SET 
-                full_name = $1, role = $2, seniority = $3, available_hours = $4, 
-                overtime_hours = $5, performance_score = $6, assigned_tasks = $7 
-                WHERE id = $8 RETURNING *`,
+                fullname = $1, role = $2, seniority = $3, availablehours = $4, salary = $5, 
+                overtimehours = $6, performancescore = $7, assignedtasks = $8 
+                WHERE id = $9 RETURNING *`,
                 [
                     employee.fullName,
                     employee.role,
                     employee.seniority,
                     employee.availableHours,
+                    employee.salary,
                     employee.overtimeHours,
                     employee.performanceScore,
                     employee.assignedTasks,
-                    id
+                    employee.id
                 ]
             );
             return res.rows[0];
@@ -81,7 +81,6 @@ export class EmployeePostgresRepository implements EmployeeRepository {
         }
     }
 
-    // Partial update (only selected fields)
     async partialUpdate(id: string, updates: Partial<Employee>): Promise<Employee | undefined> {
         try {
             const keys = Object.keys(updates);
@@ -97,7 +96,6 @@ export class EmployeePostgresRepository implements EmployeeRepository {
         }
     }
 
-    // Delete (or deactivate) employee
     async delete(id: string): Promise<Employee | undefined> {
         try {
             const res = await client.query('DELETE FROM employees WHERE id = $1 RETURNING *', [id]);
@@ -108,7 +106,6 @@ export class EmployeePostgresRepository implements EmployeeRepository {
         }
     }
 
-    // Add overtime (optional helper)
     async logOvertime(id: string, hours: number): Promise<Employee | undefined> {
         try {
             const res = await client.query(
@@ -122,7 +119,6 @@ export class EmployeePostgresRepository implements EmployeeRepository {
         }
     }
 
-    // Register eventuality
     async addEventuality(employeeId: string, event: { type: string; description: string; date: string }): Promise<boolean> {
         try {
             await client.query(

@@ -1,42 +1,41 @@
-
-### Obtener todos los empleados
 GET http://localhost:3000/api/employees
 
-### Obtener un empleado por ID
 GET http://localhost:3000/api/employees/684c8bd02ae4e5f0333939af
 
-### Crear un nuevo empleado
 POST http://localhost:3000/api/employees
 Content-Type: application/json
 
 {
-  "name": "Juan Perez",
-  "role": "Supervisor de obra",
-  "task": "Control de avance",
-  "assignedDate": "2025-08-10",
-  "status": "activo"
+  "fullName": "Juan Perez",           
+  "role": "Supervisor de obra",                 
+  "seniority": 5,            
+  "availableHours": 40,
+  "salary": 50000,
+  "overtimeHours": 5,        
+  "performanceScore": 90,     
+  "assignedTasks": ["planting"],
 }
 
-### Modificar un empleado (PUT - reemplazo completo)
 PUT http://localhost:3000/api/employees/684b9907d79c41bdd6f62e03
 Content-Type: application/json
 
 {
-  "name": "Juan Perez",
-  "role": "Encargado de seguridad",
-  "task": "Supervisión de protocolos",
-  "assignedDate": "2025-08-11",
-  "status": "activo"
+ "fullName": "Juan Perez",           
+ "role": "Supervisor de obra",                 
+ "seniority": 5,            
+ "availableHours": 40,       
+ "salary": 50000,
+ "overtimeHours": 5,        
+ "performanceScore": 90,     
+ "assignedTasks": ["planting"],
 }
 
-### Modificar un empleado (PATCH - actualización parcial)
 PATCH http://localhost:3000/api/employees/684b9907d79c41bdd6f62e03
 Content-Type: application/json
 
 {
-  "task": "Revisión de materiales",
-  "status": "inactivo"
+  "role": "Encargado de mantenimiento",
+  "overtimeHours": 10
 }
 
-### Eliminar un empleado
 DELETE http://localhost:3000/api/employees/684b9907d79c41bdd6f62e03

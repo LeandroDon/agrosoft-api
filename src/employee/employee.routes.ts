@@ -4,31 +4,30 @@ import { EmployeeController } from './employee.controller.js';
 export const employeeRouter = Router();
 const employeeController = new EmployeeController();
 
-// Rutas principales
 employeeRouter.get('/', employeeController.findAllEmployees);
 employeeRouter.get('/:id', employeeController.findEmployeeById);
 employeeRouter.post('/', sanitizeEmployeeInput, employeeController.addEmployee);
 employeeRouter.put('/:id', sanitizeEmployeeInput, employeeController.updateEmployee);
+employeeRouter.patch('/:id', employeeController.patchEmployee);
 employeeRouter.delete('/:id', employeeController.deleteEmployee);
 
-//  Ruta para registrar horas extra
 employeeRouter.post('/:id/overtime', employeeController.logOvertime);
 
-// Ruta para registrar eventualidades
 employeeRouter.post('/:id/eventualities', employeeController.addEventuality);
 
-// Middleware de sanitización
 function sanitizeEmployeeInput(req: any, res: any, next: any) {
   req.body.sanitizedInput = {
-    name: req.body.name,
-    position: req.body.position,
-    department: req.body.department,
+    fullName: req.body.fullName,
+    role: req.body.role,
+    seniority: req.body.seniority,
+    availableHours: req.body.availableHours,
     salary: req.body.salary,
     overtimeHours: req.body.overtimeHours,
-    eventualities: req.body.eventualities,
+    performanceScore: req.body.performanceScore,
+    assignedTasks: req.body.assignedTasks,
+    id: req.body.id
   };
 
-  // Eliminar campos undefined
   Object.keys(req.body.sanitizedInput).forEach((key) => {
     if (req.body.sanitizedInput[key] === undefined) {
       delete req.body.sanitizedInput[key];
