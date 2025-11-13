@@ -38,14 +38,14 @@ export class EmployeePostgresRepository implements EmployeeRepository {
                 ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
                 [
                     employee.id,
-                    employee.fullName,
+                    employee.fullname,
                     employee.role,
                     employee.seniority,
-                    employee.availableHours,
-                    employee.overtimeHours,
+                    employee.availablehours,
+                    employee.overtimehours,
                     employee.salary,
-                    employee.performanceScore,
-                    employee.assignedTasks
+                    employee.performancescore,
+                    employee.assignedtasks
             ]
     );
             return res.rows[0];
@@ -63,15 +63,15 @@ export class EmployeePostgresRepository implements EmployeeRepository {
                 overtimehours = $6, performancescore = $7, assignedtasks = $8 
                 WHERE id = $9 RETURNING *`,
                 [
-                    employee.fullName,
+                    employee.fullname,
                     employee.role,
                     employee.seniority,
-                    employee.availableHours,
+                    employee.availablehours,
                     employee.salary,
-                    employee.overtimeHours,
-                    employee.performanceScore,
-                    employee.assignedTasks,
-                    employee.id
+                    employee.overtimehours,
+                    employee.performancescore,
+                    employee.assignedtasks,
+                    id
                 ]
             );
             return res.rows[0];

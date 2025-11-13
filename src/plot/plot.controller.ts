@@ -21,7 +21,7 @@ export class PlotController {
       });
       return;
     }
-    res.json({ data: plot });
+    res.json(plot);
   }
 
   async addPlot(req: Request, res: Response) {
@@ -36,7 +36,7 @@ export class PlotController {
       input.rainfall
     );
     await plotRepository.add(newPlot);
-    res.status(201).json({ data: newPlot });
+    res.status(201).json(newPlot);
   }
 
   async updatePlot(req: Request, res: Response) {
@@ -70,7 +70,7 @@ export class PlotController {
       });
     }
 
-    res.status(200).json({ data: updated });
+    res.status(200).json(updated);
 
   } catch (err) {
     console.error('Error updating plot:', err);
@@ -89,7 +89,7 @@ export class PlotController {
         res.status(404).json({ errorMessage: 'Plot not found' });
         return;
       }
-      res.status(200).json({ data: deleted });
+      res.status(200).json(deleted);
     } catch (err) {
       console.error('Error deleting plot:', err);
       res.status(500).json({
@@ -112,7 +112,7 @@ async patchPlot(req: Request, res: Response) {
       });
     }
 
-    res.status(200).json({ data: updated });
+    res.status(200).json(updated);
 
   } catch (err) {
     console.error('Error patching plot:', err);

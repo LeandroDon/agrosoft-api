@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { Employee } from './employee.entity.js';
 import { EmployeePostgresRepository } from './employee.postgres.repository.js';
 
-// Repository instance
 const employeeRepository = new EmployeePostgresRepository();
 
 export class EmployeeController {
@@ -39,40 +38,40 @@ export class EmployeeController {
             });
             return;
         }
-        res.json({ data: employee });
+        res.json(employee);
     }
 
     async addEmployee(req: Request, res: Response) {
-        const input = req.body;
+        const input = req.body.sanitizedInput;
         const newEmployee = new Employee(
-            input.fullName,
+            input.fullname,
             input.role,
             input.seniority,
-            input.availableHours,
+            input.availablehours,
             input.salary,
-            input.overtimeHours,
-            input.performanceScore,
-            input.assignedTasks,
+            input.overtimehours,
+            input.performancescore,
+            input.assignedtasks,
             input.id
         );
 
         await employeeRepository.add(newEmployee);
-        res.status(201).json({ data: newEmployee });
+        res.status(201).json(newEmployee);
     }
 
     async updateEmployee(req: Request, res: Response) {
         const employeeId = req.params.id;
-const input = req.body;
+const input = req.body.sanitizedInput;
 
 const updatedEmployee = new Employee(
-  input.fullName,
+  input.fullname,
   input.role,
   input.seniority,
-  input.availableHours,
+  input.availablehours,
   input.salary,
-  input.overtimeHours,
-  input.performanceScore,
-  input.assignedTasks,
+  input.overtimehours,
+  input.performancescore,
+  input.assignedtasks,
   employeeId
 );
 
@@ -85,12 +84,12 @@ const updated = await employeeRepository.update(employeeId, updatedEmployee);
             return;
         }
 
-        res.json({ data: updated });
+        res.json(updated);
     }
 
     async patchEmployee(req: Request, res: Response) {
   const employeeId = req.params.id;
-  const updates = req.body;
+  const updates = req.body.sanitizedInput;
 
   const updated = await employeeRepository.partialUpdate(employeeId, updates);
   if (!updated) {

@@ -4,35 +4,35 @@ export class Employee {
     public id: string;
 
     constructor(
-        public fullName: string,           
+        public fullname: string,           
         public role: string,                 
         public seniority: number,            
-        public availableHours: number,
+        public availablehours: number,
         public salary: number,       
-        public overtimeHours: number,        
-        public performanceScore: number,     
-        public assignedTasks: string[],
+        public overtimehours: number,        
+        public performancescore: number,     
+        public assignedtasks: string[],
         id?: string
       ) {
         this.id = id ?? crypto.randomUUID();
       }
 
     addTask(task: string) {
-        this.assignedTasks.push(task);
+        this.assignedtasks.push(task);
     }
 
     logOvertime(hours: number) {
-        this.overtimeHours += hours;
+        this.overtimehours += hours;
     }
 
     deactivate() {
-        this.availableHours = 0;
-        this.assignedTasks = [];
+        this.availablehours = 0;
+        this.assignedtasks = [];
     }
 
     reassignTask(index: number, newTask: string) {
-        if (this.assignedTasks[index]) {
-            this.assignedTasks[index] = newTask;
+        if (this.assignedtasks[index]) {
+            this.assignedtasks[index] = newTask;
         }
     }
 
@@ -42,14 +42,14 @@ export class Employee {
 
     getSummary() {
         return {
-            fullName: this.fullName,
+            fullname: this.fullname,
             role: this.role,
             seniority: this.seniority,
-            availableHours: this.availableHours,
+            availablehours: this.availablehours,
             salary: this.salary,
-            overtimeHours: this.overtimeHours,
-            performanceScore: this.performanceScore,
-            assignedTasks: this.assignedTasks,
+            overtimehours: this.overtimehours,
+            performancescore: this.performancescore,
+            assignedtasks: this.assignedtasks,
             id: this.id
         };
     }

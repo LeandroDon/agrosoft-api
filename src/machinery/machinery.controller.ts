@@ -20,7 +20,7 @@ export class MachineryController {
         errorCode: 'MACHINERY_NOT_FOUND'
       });
     }
-    res.json({ data: item });
+    res.json(item);
   }
 
     async addMachinery(req: Request, res: Response) {
@@ -35,13 +35,13 @@ export class MachineryController {
       input.name,
       input.brand,
       input.model,
-      input.status,       // 'active' | 'maintenance' | 'retired'
+      input.status,
       hours,
       purchaseDate
     );
 
     await machineryRepository.create(newMachinery);
-    res.status(201).json({ data: newMachinery });
+    res.status(201).json(newMachinery);
   }
 
    async updateMachinery(req: Request, res: Response) {
@@ -72,7 +72,7 @@ export class MachineryController {
         });
       }
 
-      res.status(200).json({ data: updated });
+      res.status(200).json(updated);
     } catch (err) {
       console.error('Error updating machinery:', err);
       res.status(500).json({
@@ -89,7 +89,7 @@ export class MachineryController {
       if (!deleted) {
         return res.status(404).json({ errorMessage: 'Machinery not found' });
       }
-      res.status(200).json({ data: deleted });
+      res.status(200).json(deleted);
     } catch (err) {
       console.error('Error deleting machinery:', err);
       res.status(500).json({
@@ -120,7 +120,7 @@ export class MachineryController {
         });
       }
 
-      res.status(200).json({ data: updated });
+      res.status(200).json(updated);
     } catch (err) {
       console.error('Error patching machinery:', err);
       res.status(500).json({

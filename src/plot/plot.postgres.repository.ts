@@ -37,7 +37,7 @@ export class PlotPostgresRepository implements PlotRepository {
   async add(plot: Plot): Promise<Plot | undefined> {
   try {
     const res = await client.query(
-      `INSERT INTO plots (id, name, cadastralnumber, area, location, status, tasks, rainfall)
+      `INSERT INTO plots (id, name, cadastralNumber, area, location, status, tasks, rainfall)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
       [
         plot.id,
@@ -61,7 +61,7 @@ export class PlotPostgresRepository implements PlotRepository {
   async update(id: string, updatedPlot: Plot): Promise<Plot | undefined> {
   try {
     const res = await client.query(
-      `UPDATE plots SET name = $1, cadastralnumber = $2, area = $3, location = $4, status = $5, tasks = $6, rainfall = $7
+      `UPDATE plots SET name = $1, cadastralNumber = $2, area = $3, location = $4, status = $5, tasks = $6, rainfall = $7
        WHERE id = $8 RETURNING *`,
       [
         updatedPlot.name,

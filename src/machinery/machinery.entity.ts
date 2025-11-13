@@ -8,9 +8,7 @@ export class Machinery {
   brand: string;
   model: string;
   status: MachineryStatus;
-  /** horas acumuladas */
   hours_used: number;
-  /** fecha de compra */
   purchase_date: Date;
 
   constructor(
